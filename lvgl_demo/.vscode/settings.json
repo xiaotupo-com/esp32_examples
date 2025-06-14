@@ -1,0 +1,6 @@
+{
+    "idf.espIdfPath": "/home/zsf/esp/v5.4.1",
+    "idf.toolsPath": "/home/zsf/.espressif",
+    "idf.pythonInstallPath": "/usr/bin/python3",
+    "idf.flashType": "UART"
+}
