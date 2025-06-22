@@ -1,0 +1,31 @@
+{
+  "idf.flashType": "UART",
+  "idf.openOcdConfigs": [
+    "board/esp32s3-builtin.cfg"
+  ],
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32s3"
+  },
+  "clangd.path": "/home/zsf/.espressif/tools/esp-clang/esp-18.1.2_20240912/esp-clang/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=/home/zsf/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc",
+    "--compile-commands-dir=/home/zsf/dev/esp32_dev/blink/build"
+  ],
+  "idf.port": "/dev/ttyACM0",
+  "files.associations": {
+    "*.cpp": "cpp",
+    "*.mdx": "mdx",
+    "*.c": "c",
+    "task.h": "c",
+    "iot_button.h": "c",
+    "cstdint": "c",
+    "esp_log.h": "c",
+    "array": "c",
+    "string": "c",
+    "string_view": "c",
+    "span": "c",
+    "button_types.h": "c",
+    "sdkconfig.h": "c"
+  }
+}
