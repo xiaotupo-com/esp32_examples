@@ -27,5 +27,8 @@
     "span": "c",
     "button_types.h": "c",
     "sdkconfig.h": "c"
-  }
+  },
+  "idf.espIdfPath": "/home/zsf/esp/v5.4.1",
+  "idf.toolsPath": "/home/zsf/.espressif",
+  "idf.pythonInstallPath": "/usr/bin/python3"
 }

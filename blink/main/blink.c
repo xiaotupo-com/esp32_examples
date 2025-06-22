@@ -9,10 +9,12 @@
 static const char *TAG = "blink";
 
 TaskHandle_t led_handle = NULL;
+TaskHandle_t motor_handle = NULL;
 
 // GPIO 定义
 #define LED_PIN_NUM GPIO_NUM_1
 #define Key_PIN_NUM GPIO_NUM_0
+#define MOTOR_PIN_NUM GPIO_NUM_11
 
 // 单击回调函数
 static void button_single_click_cb(void *arg, void *data)
@@ -22,13 +24,25 @@ static void button_single_click_cb(void *arg, void *data)
 
     // 改变 led 任务的挂起与恢复挂起
     if (led_handle != NULL) {
-        if(eTaskGetState(led_handle) == eSuspended) { // 挂起态
+        if (eTaskGetState(led_handle) == eSuspended) { // 挂起态
             printf("LED 任务已恢复运行!\n");
             vTaskResume(led_handle); // 恢复任务
         } else {
             printf("LED 任务已被挂起!\n");
             gpio_set_level(LED_PIN_NUM, 1); // 熄灭 LED
-            vTaskSuspend(led_handle); // 挂起任务
+            vTaskSuspend(led_handle);       // 挂起任务
+        }
+    }
+
+    // 改变 motor 任务的挂起与恢复挂起
+    if (motor_handle != NULL) {
+        if (eTaskGetState(motor_handle) == eSuspended) { // 挂起态
+            printf("Motor 任务已恢复运行!\n");
+            vTaskResume(motor_handle); // 恢复任务
+        } else {
+            printf("Motor 任务已被挂起!\n");
+            gpio_set_level(MOTOR_PIN_NUM, 0); // 关闭马达
+            vTaskSuspend(motor_handle);       // 挂起任务
         }
     }
 }
@@ -77,14 +91,36 @@ void led_task(void *vParam)
     }
 }
 
+void motor_task(void *vparam)
+{
+    gpio_set_direction(MOTOR_PIN_NUM, GPIO_MODE_OUTPUT);
+    uint16_t hight_num = 100;
+    uint16_t low_num = 200;
+    while (1) {
+        gpio_set_level(MOTOR_PIN_NUM, 0); // 关闭
+        vTaskDelay(pdMS_TO_TICKS(low_num));
+        gpio_set_level(MOTOR_PIN_NUM, 1); // 打开
+        vTaskDelay(pdMS_TO_TICKS(hight_num));
+
+        gpio_set_level(MOTOR_PIN_NUM, 0); // 关闭
+        vTaskDelay(pdMS_TO_TICKS(low_num));
+        gpio_set_level(MOTOR_PIN_NUM, 1); // 打开
+        vTaskDelay(pdMS_TO_TICKS(hight_num * 10));
+
+        gpio_set_level(MOTOR_PIN_NUM, 0); // 关闭
+        vTaskDelay(pdMS_TO_TICKS(low_num / 2));
+        gpio_set_level(MOTOR_PIN_NUM, 1); // 打开
+        vTaskDelay(pdMS_TO_TICKS(hight_num / 2));
+    }
+}
+
 void app_main(void)
 {
     ESP_LOGI(TAG, "初始化完成");
     xTaskCreatePinnedToCore(led_task, "led_task", 2048, NULL, 5, &led_handle, 1);
+    xTaskCreatePinnedToCore(motor_task, "motor_task", 2048, NULL, 5, &motor_handle, 1);
+
+    vTaskSuspend(motor_handle); // 挂起任务
 
     xtp_button_init(Key_PIN_NUM);
-    while (1) {
-        ESP_LOGI(TAG, "app_main loop");
-        vTaskDelay(pdMS_TO_TICKS(1500));
-    }
 }
